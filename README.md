@@ -13,7 +13,7 @@ Few project from university course on Blazor.
 - Tutorial2 (Data bindings and layout)
 - Tutorial3 (SVG Basics)
 - Tutorial4 (Multi-threading)
-- Tutorial5 (ADO .NET)
+- Tutorial5 (ADO .NET, PostgeSQL)
 - Tutorial6 (Components)
 - Tutorial7 (Web Services)
 - ProblemBasedCase1 (Events)
