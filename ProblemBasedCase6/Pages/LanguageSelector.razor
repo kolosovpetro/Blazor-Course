@@ -1,0 +1,28 @@
+﻿@page "/programming_language"
+@using ProblemBasedCase6.Data
+<h3>Language Selector Parent Component</h3>
+<EditForm Model="@_languageEnums">
+    <InputSelect @bind-Value="_currentLanguageEnum">
+        @foreach (var value in _languageEnums)
+        {
+            <option>@value</option>
+        }
+    </InputSelect>
+</EditForm>
+<hr/>
+<ChildLanguageSelector CurrentLanguage="@_currentLanguageEnum"></ChildLanguageSelector>
+
+@code {
+    private readonly PostgresContext _postgresContext = new PostgresContext();
+    private List<LanguageEnum> _languageEnums;
+    private LanguageEnum _currentLanguageEnum = LanguageEnum.CSharp;
+
+    protected override void OnInitialized()
+    {
+        _languageEnums = LanguageMapper.Map(_postgresContext.GetAllLanguages())
+            .Select(x => x.EnumValue)
+            .Distinct()
+            .ToList();
+    }
+
+}

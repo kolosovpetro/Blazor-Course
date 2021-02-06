@@ -1,0 +1,64 @@
+@page "/counter"
+@using System.Timers
+@using Tutorial4.Data
+<div style="width: 300px; height: 300px">
+    <svg width="300" height="300" style="border: 1px solid black">
+        @foreach (var ball in _movingBalls)
+        {
+            <circle r="8" cx="@ball.PositionX" cy="@ball.PositionY" fill="@ball.Color"></circle>
+        }
+    </svg>
+    <p>Current count: @CurrentCount</p>
+    <div style="display: flex; justify-content: space-between">
+        <div>
+            <button class="btn btn-primary" @onclick="StartAnimation">Start Animation</button>
+        </div>
+        <div>
+            <button class="btn btn-danger" @onclick="StopAnimation">Stop Animation</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private static int CurrentCount { get; set; }
+    private readonly List<MovingBall> _movingBalls = new List<MovingBall>();
+    private static readonly Timer Timer = new Timer();
+
+    private void InitializeBalls()
+    {
+        var random = new Random();
+        for (var i = 0; i < 50; i++)
+        {
+            var newX = random.Next(1, 290);
+            var newY = random.Next(1, 290);
+            var ball = new MovingBall(newX, newY);
+            ball.Color = (Colors) random.Next(0, 6);
+            ball.SetLimitX(0, 290);
+            ball.SetLimitY(0, 290);
+            var randomVelocityX = random.Next(1, 4);
+            var randomVelocityY = random.Next(1, 4);
+            ball.SetVelocity(randomVelocityX, randomVelocityY);
+            _movingBalls.Add(ball);
+        }
+    }
+
+    private void StartAnimation()
+    {
+        InitializeBalls();
+        Timer.Interval = 50;
+        Timer.Elapsed += Animation;
+        Timer.Start();
+        CurrentCount++;
+    }
+
+    private static void StopAnimation() => Timer.Stop();
+
+    private void Animation(object sender, EventArgs args)
+    {
+        CurrentCount++;
+        foreach (var ball in _movingBalls)
+            ball.Move();
+        InvokeAsync(StateHasChanged);
+    }
+
+}

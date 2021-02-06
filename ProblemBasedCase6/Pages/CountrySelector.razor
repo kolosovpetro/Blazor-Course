@@ -1,0 +1,27 @@
+﻿@using ProblemBasedCase6.Data
+<h3>Child Component</h3>
+<h4>Select country</h4>
+<EditForm Model="@_countryModels">
+    <InputSelect @bind-Value="SelectedCountry">
+        @foreach (var value in _countryModels)
+        {
+            <option>@value.Value</option>
+        }
+    </InputSelect>
+</EditForm>
+<p>Selected country: @SelectedCountry</p>
+<button class="btn btn-primary" @onclick="@(() => OnClick.InvokeAsync(SelectedCountry))">
+    Click To Update Parent
+</button>
+@code {
+    private readonly PostgresContext _postgresContext = new PostgresContext();
+    private List<CountryModel> _countryModels;
+    private string SelectedCountry { get; set; } = "No country chosen";
+    [Parameter] public EventCallback<string> OnClick { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _countryModels = CountryMapper.Map(_postgresContext.GetAllCountries()).ToList();
+    }
+
+}

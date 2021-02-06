@@ -1,0 +1,1 @@
+SELECT task_id, taskname, responsible, to_char(deadline,'DD/MON/YYYY') FROM task WHERE status = 'Running';

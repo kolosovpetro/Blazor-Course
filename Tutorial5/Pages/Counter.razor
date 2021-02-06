@@ -1,0 +1,52 @@
+@page "/ado_net"
+@using Tutorial5.Data
+
+<h1>ADO NET</h1>
+
+<button class="btn btn-primary" @onclick="GetTasks">Show tasks</button>
+<br>
+@{
+
+}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Responsible</th>
+        <th scope="col">Created On</th>
+        <th scope="col">Deadline</th>
+        <th scope="col">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_taskModels != null)
+    {
+        foreach (var row in _taskModels)
+        {
+            <tr>
+                <th scope="row">@row.TaskId</th>
+                <td>@row.Responsible</td>
+                <td>@row.CreatedOn</td>
+                <td>@row.Deadline</td>
+                <td>@row.Status</td>
+            </tr>
+        }
+    }
+    else
+    {
+        <p>Click to show running tasks</p>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly PostgresContext _postgresContext = new PostgresContext();
+    private List<TaskModel> _taskModels;
+
+    private void GetTasks()
+    {
+        var dataTable = _postgresContext.GetAllTasks();
+        _taskModels = TaskMapper.Map(dataTable).ToList();
+    }
+
+}

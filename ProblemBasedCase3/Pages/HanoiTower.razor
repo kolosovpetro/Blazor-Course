@@ -1,0 +1,79 @@
+﻿@using ProblemBasedCase3.Interfaces
+@using ProblemBasedCase3.Enums
+
+<svg width="@SvgWidth" height="@SvgHeight">
+    <rect width="@SvgVerticalRectangleWidth" height="@(SvgHeight - SvgVerticalRectangleWidth)"
+          style="fill:@TowerColor" x="@SvgVerticalRectangleX" y="@SvgVerticalRectangleY"
+          @onclick="ChangeColor"/>
+    <rect width="@SvgWidth" height="@SvgHorizontalRectangleHeight"
+          style="fill:@TowerColor" x="@SvgHorizontalRectangleX" y="@SvgHorizontalRectangleY"
+          @onclick="ChangeColor"/>
+    <text x="50" y="15">Capacity: @Tower.Capacity</text>
+    @for (var i = 0; i < GetAllDisks().Count; i++)
+    {
+        if (GetAllDisks().Count == 0)
+        {
+            break;
+        }
+
+        var currentDisk = GetAllDisks()[i];
+        <rect width="@currentDisk.Width" height="@currentDisk.Height" style="fill:@currentDisk.Color"
+              x="@((SvgWidth - currentDisk.Width) / 2)"
+              y="@(SvgHeight - SvgHorizontalRectangleHeight - SpaceBetweenDisks * (i + 1))"
+              @onclick="() => PopDisk(currentDisk.Id)"/>
+    }
+</svg>
+<hr>
+<input type="number" placeholder="Enter width" @bind="NewDiskWidth">
+<EditForm Model="NewDiskColor">
+    <InputSelect @bind-Value="NewDiskColor">
+        @foreach (var value in Enum.GetValues(typeof(Colors)))
+        {
+            <option>@value</option>
+        }
+    </InputSelect>
+</EditForm>
+<button class="btn btn-primary" @onclick="PushDisk">Push Disk</button>
+<button class="btn btn-danger" @onclick="PopDisk">Pop Disk</button>
+
+@code {
+
+    [Parameter]
+    public IHanoiTower Tower { get; set; }
+
+    private Colors NewDiskColor { get; set; } = Colors.Blue;
+    private Colors TowerColor { get; set; } = Colors.Black;
+
+    #region Svg Settings
+
+    private int SvgVerticalRectangleWidth => 15;
+    private int SvgVerticalRectangleX => 80;
+    private int SvgVerticalRectangleY => 30;
+    private int SvgHorizontalRectangleHeight => 15;
+    private int SvgHorizontalRectangleX => 0;
+    private int SvgHorizontalRectangleY => SvgHeight - SvgHorizontalRectangleHeight;
+    private int SvgWidth { get; set; } = 170;
+    private int SvgHeight => Tower.Capacity * (NewDiskHeight + SpaceBetweenDisks - SvgHorizontalRectangleHeight) + SpaceBetweenDisks;
+
+    #endregion
+
+    private int NewDiskWidth { get; set; } = 150;
+    private int NewDiskHeight { get; set; } = 25;
+    private int SpaceBetweenDisks { get; set; } = 30;
+
+    private void PushDisk() => Tower.PushDisk(new Implementations.HanoiDisk
+    {
+        Width = NewDiskWidth,
+        Color = NewDiskColor,
+        Height = NewDiskHeight
+    });
+
+    private void PopDisk() => Tower.PopDisk();
+
+    private void PopDisk(int id) => Tower.PopDisk(id);
+
+    private void ChangeColor() => TowerColor = TowerColor == Colors.Black ? Colors.Blue : Colors.Black;
+
+    private List<IHanoiDisk> GetAllDisks() => Tower.GetAllDisks().ToList();
+
+}

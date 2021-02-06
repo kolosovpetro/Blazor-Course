@@ -1,0 +1,54 @@
+﻿@page "/Graph/{Values;Colors}"
+<svg width="@(_size * 75 + 20)" height="200">
+    @for (var i = 0; i < _size; i++)
+    {
+        <rect x="@(10 + i * 60)"
+              y="@(160 - _height[i])"
+              width="15"
+              height="@(_height[i])"
+              style="fill:@(_colorsSplit[i])"/>
+    }
+    
+    @for (var i = 0; i < _size; i++)
+    {
+        <text>
+            <text x="@(15 + i * 60)"
+                  y="@(150 - _height[i])"
+                  text-anchor="middle">
+                @_integerValues[i]
+            </text>
+            <text x="@(15 + i * 60)"
+                  y="@(15)"
+                  text-anchor="middle">
+                @_titlesSplit[i]
+            </text>
+        </text>
+    }
+</svg>
+
+@code{
+    [Parameter] public string Values { get; set; }
+    [Parameter] public string Colors { get; set; }
+    [Parameter] public string Titles { get; set; }
+    private int _size;
+    private string[] _colorsSplit, _titlesSplit;
+    private int[] _integerValues, _height;
+    protected override void OnInitialized()
+    {
+        Values ??= "0,1,2,3,4,5,6,7,8";
+        Colors ??= "#ff0000,#00ff00,#0000ff,#0f0f0f,#0f0f00,#0f0000,#0fffff,#0000f0,#fffff0";
+        Titles ??= "Title1,Title2,Title3,Title4,Title5,Title6,Title7,Title8";
+        
+        _integerValues = Values.Split(",").Select(int.Parse).ToArray();
+        _colorsSplit = Colors.Split(",");
+        _titlesSplit = Titles.Split(",");
+        _size = Math.Min(_integerValues.Length, _colorsSplit.Length);
+        _height = new int[_integerValues.Length];
+        
+        for (var i = 0; i < _integerValues.Length; i++)
+        {
+            _height[i] = _integerValues[i] * 100 / _integerValues.Max();
+        }
+    }
+
+}

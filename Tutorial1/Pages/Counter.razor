@@ -1,0 +1,44 @@
+@page "/counter"
+
+<h1>Counter</h1>
+
+<p>Current count: @_currentCount</p>
+<p style="background-color: #308090; color: white; font-family: courier,serif">
+    Current message: @Message
+</p>
+<p class="btn-primary">
+    Current message: @Message
+</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<hr/>
+<table class="environment">
+    <tr>
+        <td class="cell alive"></td>
+        <td class="cell dead"></td>
+        <td class="cell alive"></td>
+    </tr>
+    <tr>
+        <td class="cell dead"></td>
+        <td class="cell alive"></td>
+        <td class="cell dead"></td>
+    </tr>
+    <tr>
+        <td class="cell alive"></td>
+        <td class="cell dead"></td>
+        <td class="cell alive"></td>
+    </tr>
+</table>
+
+@code {
+    private int _currentCount;
+
+    private string Message { get; set; }
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+        Message = $"Hello Petro {_currentCount}";
+    }
+
+}

@@ -1,0 +1,91 @@
+@page "/patterns"
+@using Environment = ProblemBasedCase2.Data.Environment
+
+<h1>Patterns</h1>
+<button class="btn btn-info" @onclick="ShowMenu">@MenuButtonMessage</button>
+<br>
+<br>
+<div style="display: @(Displayed ? "" : "none")">
+    <button class="btn btn-primary" @onclick="PrintPattern1">Pattern 1</button>
+    <button class="btn btn-primary" @onclick="PrintPattern2">Pattern 2</button>
+    <button class="btn btn-primary" @onclick="PrintPattern3">Pattern 3</button>
+    <button class="btn btn-primary" @onclick="PrintPattern4">Pattern 4</button>
+    <button class="btn btn-primary" @onclick="PrintPattern5">Pattern 5</button>
+    <button class="btn btn-danger" @onclick="Clear">Clear</button>
+    <br>
+    <br>
+    Row <input type="number" @bind="Row">
+    Col <input type="number" @bind="Column">
+    Height <input type="number" @bind="Height">
+</div>
+<br>
+<br>
+<table class="environment">
+    @for (var row = 0; row < _env.RowsNumber; row++)
+    {
+        <tr>
+            @for (var col = 0; col < _env.ColumnsNumber; col++)
+            {
+                if (_env.IsAlive(row, col))
+                {
+                    <td class="cell alive"></td>
+                }
+                else
+                {
+                    <td class="cell dead"></td>
+                }
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    private readonly Environment _env = new Environment(30, 30);
+    private bool Displayed { get; set; }
+    private string MenuButtonMessage { get; set; } = "Show Menu";
+    private int Row { get; set; } = 5;
+    private int Column { get; set; } = 5;
+    private int Height { get; set; } = 8;
+
+    private void ShowMenu()
+    {
+        Displayed = !Displayed;
+        MenuButtonMessage = Displayed ? "Hide Menu" : "Show Menu";
+    }
+
+    private void PrintPattern1()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern1(Row, Column);
+    }
+
+    private void PrintPattern2()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern2(Row, Column, Height);
+    }
+
+    private void PrintPattern3()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern3(Row, Column, Height);
+    }
+    
+    private void PrintPattern4()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern4(Row, Column, Height);
+    }
+    
+    private void PrintPattern5()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern5(Row, Column, Height);
+    }
+
+    private void Clear()
+    {
+        _env.InitializeMatrix();
+    }
+
+}

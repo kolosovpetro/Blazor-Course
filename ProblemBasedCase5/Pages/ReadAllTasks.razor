@@ -1,0 +1,94 @@
+@page "/read_all_tasks"
+@using ProblemBasedCase5.Data
+@using TaskStatus = ProblemBasedCase5.Data.TaskStatus
+
+<h1>Read Tasks</h1>
+<button class="btn btn-primary" @onclick="@(() => Reselect(_doc.Status))">Reselect</button>
+<EditForm Model="_doc">
+    <InputSelect @bind-Value="_doc.Status">
+        @foreach (var value in Enum.GetValues(typeof(TaskStatus)))
+        {
+            <option>@value</option>
+        }
+    </InputSelect>
+</EditForm>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Task Name</th>
+        <th scope="col">Responsible</th>
+        <th scope="col">Created On</th>
+        <th scope="col">Deadline</th>
+        <th scope="col">Status</th>
+        <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_taskModels != null)
+    {
+        foreach (var row in _taskModels)
+        {
+            <tr>
+                <th scope="row">@row.TaskId</th>
+                <td>@row.TaskName</td>
+                <td>@row.Responsible</td>
+                <td>@row.CreatedOn</td>
+                <td>@row.Deadline</td>
+                <td>@row.Status</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="@(() => GoToUpdate(row.TaskId))">Update</button>
+                    <button class="btn btn-danger" @onclick="@(() => GoToDelete(row.TaskId))">Delete</button>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <p>No running tasks</p>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly PostgresContext _postgresContext = new PostgresContext();
+    private List<TaskModel> _taskModels;
+    private readonly TaskModel _doc = new TaskModel();
+
+    [Inject]
+    NavigationManager Manager { get; set; }
+
+    private void GetTasks()
+    {
+        var dataTable = _postgresContext.GetAllTasks();
+        _taskModels = TaskMapper.Map(dataTable).OrderBy(x => x.TaskId).ToList();
+    }
+
+    protected override void OnInitialized()
+    {
+        GetTasks();
+    }
+
+    private void GoToUpdate(long id)
+    {
+        Manager.NavigateTo($"update_tasks/{id}");
+    }
+
+    private void GoToDelete(long id)
+    {
+        Manager.NavigateTo($"/delete_tasks/{id}");
+    }
+
+    private void Reselect(TaskStatus status)
+    {
+        GetTasks();
+        
+        if (_taskModels == null || !_taskModels.Any())
+        {
+            return;
+        }
+
+        _taskModels = _taskModels.Where(x => x.Status == status).ToList();
+    }
+
+}

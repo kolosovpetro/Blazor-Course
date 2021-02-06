@@ -1,0 +1,16 @@
+﻿@page "/select_country"
+<h3>Parent component</h3>
+<p>Selected country: @ChildSelected</p>
+<hr/>
+<CountrySelector OnClick="@ClickHandler"></CountrySelector>
+@code {
+
+    private string ChildSelected { get; set; } = "No selected country, click";
+
+    private async Task ClickHandler(string newMessage)
+    {
+        await new TaskFactory().StartNew(() => ChildSelected = newMessage);
+        StateHasChanged();
+    }
+
+}

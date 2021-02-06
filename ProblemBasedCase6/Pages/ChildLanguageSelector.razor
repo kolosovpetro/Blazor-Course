@@ -1,0 +1,11 @@
+﻿@using ProblemBasedCase6.Data
+<h3>Child Language Selector Component</h3>
+
+<p>Current language: @CurrentLanguage</p>
+
+@code {
+
+    [Parameter]
+    public LanguageEnum CurrentLanguage { get; set; } = LanguageEnum.CSharp;
+
+}

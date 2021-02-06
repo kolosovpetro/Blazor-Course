@@ -1,0 +1,121 @@
+@page "/patterns"
+@using Environment = Tutorial3.Data.Environment
+
+<h1>Patterns</h1>
+<button class="btn btn-info" @onclick="ShowMenu">@MenuButtonMessage</button>
+<br>
+<br>
+<div style="display: @(Displayed ? "" : "none")">
+    <button class="btn btn-primary" @onclick="PrintPattern1">Pattern 1</button>
+    <button class="btn btn-primary" @onclick="PrintPattern2">Pattern 2</button>
+    <button class="btn btn-primary" @onclick="PrintPattern3">Pattern 3</button>
+    <button class="btn btn-primary" @onclick="PrintPattern4">Pattern 4</button>
+    <button class="btn btn-primary" @onclick="PrintPattern5">Pattern 5</button>
+    <button class="btn btn-danger" @onclick="Clear">Clear</button>
+    <br>
+    <br>
+    Row <input type="number" @bind="Row">
+    Col <input type="number" @bind="Column">
+    Height <input type="number" @bind="Height">
+</div>
+<br>
+<br>
+
+@{
+    var svgHeight = _env.RowsNumber * 9 + 2;
+    var svgWidth = _env.ColumnsNumber * 9 + 2;
+}
+<svg width="@svgWidth" height="@svgHeight">
+    <defs>
+        <filter id="myBlur" x="0" y="0">
+            <feGaussianBlur in="SourceGraphics" stdDeviation="3"></feGaussianBlur>
+        </filter>
+    </defs>
+    @for (var row = 0; row < _env.RowsNumber; row++)
+    {
+        @for (var col = 0; col < _env.ColumnsNumber; col++)
+        {
+            var cx = col * 9 + 5;
+            var cy = row * 9 + 5;
+            var currentRow = row;
+            var currentCol = col;
+            if (_env.IsAlive(row, col))
+            {
+                <circle r="4" cx="@cx" cy="@cy" fill="#90FA90" filter="url(#myBlur)"
+                        @onclick="() => CellClick(currentRow, currentCol)">
+                </circle>
+            }
+            else
+            {
+                <circle r="4" cx="@cx" cy="@cy" fill="#909090" filter="url(#myBlur)"
+                        @onclick="() => CellClick(currentRow, currentCol)">
+                </circle>
+            }
+        }
+    }
+</svg>
+
+@code {
+    private readonly Environment _env = new Environment(30, 30);
+    private bool Displayed { get; set; }
+    private string MenuButtonMessage { get; set; } = "Show Menu";
+    private int Row { get; set; } = 5;
+    private int Column { get; set; } = 5;
+    private int Height { get; set; } = 8;
+
+    private void CellClick(int x, int y)
+    {
+        if (_env.IsAlive(x, y))
+        {
+            _env.Die(x, y);
+        }
+        else
+        {
+            _env.Live(x, y);
+        }
+        
+        Console.WriteLine($"{x} -- {y}");
+    }
+
+    private void ShowMenu()
+    {
+        Displayed = !Displayed;
+        MenuButtonMessage = Displayed ? "Hide Menu" : "Show Menu";
+    }
+
+    private void PrintPattern1()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern1(Row, Column);
+    }
+
+    private void PrintPattern2()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern2(Row, Column, Height);
+    }
+
+    private void PrintPattern3()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern3(Row, Column, Height);
+    }
+
+    private void PrintPattern4()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern4(Row, Column, Height);
+    }
+
+    private void PrintPattern5()
+    {
+        _env.InitializeMatrix();
+        _env.PrintPattern5(Row, Column, Height);
+    }
+
+    private void Clear()
+    {
+        _env.InitializeMatrix();
+    }
+
+}

@@ -1,0 +1,92 @@
+@page "/insert_tasks"
+@using ProblemBasedCase5.Data
+@using TaskStatus = ProblemBasedCase5.Data.TaskStatus
+
+<h1>Create Task</h1>
+
+<div>
+    <div class="form-group">
+        <label for="task_name">Task Name</label>
+        <input @bind="_doc.TaskName" type="text" class="form-control" id="task_name" placeholder="Enter task name">
+    </div>
+    <div class="form-group">
+        <label for="supervisor">Supervisor</label>
+        <input @bind="_doc.Supervisor" type="text" class="form-control" id="supervisor" placeholder="Enter supervisor">
+    </div>
+    <div class="form-group">
+        <label for="email_supervisor">Email of Supervisor</label>
+        <input @bind="_doc.EmailSupervisor" type="email" class="form-control" id="email_supervisor" placeholder="Enter email of supervisor">
+    </div>
+    <div class="form-group">
+        <label for="responsible">Responsible</label>
+        <input @bind="_doc.Responsible" type="text" class="form-control" id="responsible" placeholder="Enter responsible">
+    </div>
+    <div class="form-group">
+        <label for="email_responsible">Email of Responsible</label>
+        <input @bind="_doc.EmailResponsible" type="email" class="form-control" id="email_responsible" placeholder="Enter supervisor">
+    </div>
+    <div class="form-group">
+        <label for="created_on">Created On</label>
+        <input @bind="_doc.CreatedOn" type="date" class="form-control" id="created_on" placeholder="Enter date crated">
+    </div>
+    <div class="form-group">
+        <label for="deadline">Deadline</label>
+        <input @bind="_doc.Deadline" type="date" class="form-control" id="deadline" placeholder="Enter deadline">
+    </div>
+    <div class="form-group">
+        <label for="first_delivering">First Delivering</label>
+        <input @bind="_doc.FirstDelivering" type="date" class="form-control" id="first_delivering" placeholder="Enter first delivering">
+    </div>
+    <div class="form-group">
+        <label for="first_revising">First Revising</label>
+        <input @bind="_doc.FirstRevising" type="date" class="form-control" id="first_revising" placeholder="Enter first revising">
+    </div>
+    <div class="form-group">
+        <label for="estimate_hours">Estimate hours</label>
+        <input @bind="_doc.EstimateHours" type="number" class="form-control" id="estimate_hours" placeholder="Enter estimate hours">
+    </div>
+    <div class="form-group">
+        <label for="effective_hours">Effective hours</label>
+        <input @bind="_doc.EffectiveHours" type="number" class="form-control" id="effective_hours" placeholder="Enter effective hours">
+    </div>
+    <EditForm Model="_doc">
+        <InputSelect @bind-Value="_doc.Status">
+            @foreach (var value in Enum.GetValues(typeof(TaskStatus)))
+            {
+                <option>@value</option>
+            }
+        </InputSelect>
+    </EditForm>
+    <br>
+    <button class="btn btn-primary" @onclick="CreateTask">Create Task</button>
+</div>
+
+@code {
+    private readonly PostgresContext _postgresContext = new PostgresContext();
+
+    private readonly TaskModel _doc = new TaskModel
+    {
+        TaskName = "Polynomial equations solver",
+        Supervisor = "George Orwell",
+        EmailSupervisor = "gorwell@highcomnapy.pl",
+        Responsible = "John Doe",
+        EmailResponsible = "johndoe@highcomnapy.pl",
+        CreatedOn = DateTime.Now,
+        Deadline = DateTime.Parse("2021-12-30 14:00:00"),
+        FirstDelivering = DateTime.Parse("2021-12-25 14:00:00"),
+        FirstRevising = DateTime.Parse("2021-12-26 14:00:00"),
+        EstimateHours = 14,
+        EffectiveHours = 12,
+        Status = TaskStatus.Running
+    };
+
+    [Inject]
+    NavigationManager Manager { get; set; }
+
+    private void CreateTask()
+    {
+        PostgresContext.Insert(_doc);
+        Manager.NavigateTo("read_all_tasks");
+    }
+
+}

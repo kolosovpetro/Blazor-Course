@@ -1,0 +1,77 @@
+@page "/rabbits_and_carrots"
+@using Environment = ProblemBasedCase1.Data.Environment
+@using ProblemBasedCase1.Data
+
+<h1>Rabbits and Carrots</h1>
+
+<p>Current count: @_currentCount</p>
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@{
+    InitializeEnvironment();
+    var count1 = _environment.NeighborsList(2, 4).Count();
+    var count2 = _environment.NeighborsList(13, 14).Count();
+    var count3 = _environment.NeighborsList(1, 1).Count();
+    var carrotCount = _environment.SurroundingNeighbors(3, 3, typeof(Rabbit)).Count();
+    Console.WriteLine("Neighbors:");
+    Console.WriteLine(count1);
+    Console.WriteLine(count2);
+    Console.WriteLine(count3);
+    Console.WriteLine(carrotCount);
+}
+<hr/>
+<table class="environment">
+    @for (var row = 0; row < _environment.RowsNumber; row++)
+    {
+        <tr>
+            @for (var col = 0; col < _environment.ColumnsNumber; col++)
+            {
+                var unit = _environment.GetBioUnit(row, col);
+                if (unit != null)
+                {
+                    <td class="cell" style="background-color: @unit.GetColor()"></td>
+                }
+                else
+                {
+                    <td class="cell dead"></td>
+                }
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    private int _currentCount;
+    private readonly Environment _environment = new Environment(40, 40);
+    private BioUnit _bioUnit;
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+        _environment.NextRabbitCarrotStep();
+    }
+
+    private void InitializeEnvironment()
+    {
+        if (_currentCount != 0) return;
+        _bioUnit = new Rabbit(3, 3, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Rabbit(3, 4, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Rabbit(3, 5, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Rabbit(2, 5, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Rabbit(1, 4, _environment);
+        _environment.Insert(_bioUnit);
+
+        _bioUnit = new Carrot(11, 14, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Carrot(12, 15, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Carrot(13, 14, _environment);
+        _environment.Insert(_bioUnit);
+        _bioUnit = new Carrot(0, 0, _environment);
+        _environment.Insert(_bioUnit);
+    }
+
+}

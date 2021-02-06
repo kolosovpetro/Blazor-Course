@@ -1,0 +1,26 @@
+INSERT INTO task (
+	taskname,
+	supervisor,
+	email_supervisor,
+	responsible,
+	email_responsible,
+	created_on,
+	deadline,
+	first_delivaring,
+	first_revising,
+	estimate_hours,
+	effective_hours,
+	status)
+VALUES (
+	'quick sort method',
+	'Alex Polini',
+	'apol@highcomnapy.pl',
+	'Wandy Stern',
+	'wstern@highcomnapy.pl',
+	NOW(),
+	'2020-12-24 14:00:00',
+	'2020-12-20 14:00:00',
+	'2020-12-21 14:00:00',
+	14,
+	12,
+	'Running') Returning task_id;

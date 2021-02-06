@@ -1,0 +1,131 @@
+@page "/counter"
+@using ProblemBasedCase4.Data
+@using System.Threading
+@using Timer = System.Timers.Timer
+<div style="width: 300px; height: 300px">
+    <svg width="300" height="300" style="border: 1px solid black">
+        @foreach (var ball in _movingBalls)
+        {
+            <circle r="@ball.Radius" cx="@ball.PositionX" cy="@ball.PositionY" fill="@ball.Color"></circle>
+        }
+    </svg>
+    <p>Status: @Message</p>
+    <div style="display: flex; justify-content: space-between">
+        <div>
+            <button class="btn btn-primary" @onclick="StartAnimation">Start</button>
+        </div>
+        <div>
+            <button class="btn btn-primary" @onclick="ResetAnimation">Reset</button>
+        </div>
+        <div>
+            <button class="btn btn-danger" @onclick="StopAnimation">Stop</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private static int CurrentCount { get; set; }
+    private readonly List<MovingBall> _movingBalls = new List<MovingBall>();
+    private static readonly Timer Timer = new Timer();
+    private string Message { get; set; } = "Not started yet";
+
+    private readonly MovingBall _redBall = new MovingBall(50, 50)
+    {
+        Color = Colors.Red
+    };
+
+    private void InitializeBalls()
+    {
+        _movingBalls.Add(_redBall);
+        var random = new Random();
+        for (var i = 0; i < 50; i++)
+        {
+            var newX = random.Next(1, 290);
+            var newY = random.Next(1, 290);
+            var ball = new MovingBall(newX, newY) {Color = Colors.Green};
+            ball.SetLimitX(0, 290);
+            ball.SetLimitY(0, 290);
+            var randomVelocityX = random.Next(1, 4);
+            var randomVelocityY = random.Next(1, 4);
+            ball.SetVelocity(randomVelocityX, randomVelocityY);
+            _movingBalls.Add(ball);
+        }
+    }
+
+    private void StartAnimation()
+    {
+        var thread = new Thread(() =>
+        {
+            if (_movingBalls.Count == 0)
+            {
+                InitializeBalls();
+                Timer.Interval = 100;
+                Timer.Elapsed += Animation;
+            }
+
+            Timer.Start();
+            CurrentCount++;
+        });
+        thread.Start();
+    }
+
+    private static void StopAnimation()
+    {
+        Timer.Stop();
+    }
+
+    private void ResetAnimation()
+    {
+        Timer.Stop();
+        Timer.Elapsed -= Animation;
+        CurrentCount = 0;
+        Message = "Restarted";
+        _movingBalls.Clear();
+    }
+
+    private void Animation(object sender, EventArgs args)
+    {
+        CurrentCount++;
+
+        foreach (var ball in _movingBalls)
+        {
+            ball.Move();
+            var thread = new Thread(() =>
+            {
+                DetectCollision();
+                _movingBalls.Where(x => x.Color == Colors.Red).ToList().ForEach(PaintTouched);
+                Thread.Sleep(100);
+                Console.WriteLine($"Animation thread works {DateTime.Now}");
+                
+                if (_movingBalls.All(x => x.Color == Colors.Red))
+                {
+                    DetectCollision();
+                    StopAnimation();
+                    InvokeAsync(StateHasChanged);
+                }
+            });
+            thread.Start();
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void DetectCollision()
+    {
+        var totalCol = _movingBalls.Sum(x => x.CollisionCount(x, _movingBalls)) / 2;
+        var redCount = _movingBalls.Count(x => x.Color == Colors.Red);
+        var greenCount = _movingBalls.Count(x => x.Color == Colors.Green);
+        Message = $"Iteration: {CurrentCount}, " +
+                  $"Total collisions: {totalCol}, " +
+                  $"Red Count: {redCount}, " +
+                  $"Green Count {greenCount}";
+        Thread.Sleep(50); // timer's delay is 100
+    }
+
+    private void PaintTouched(MovingBall ball)
+    {
+        var nearBalls = MovingBall.GetCollisionBalls(ball, _movingBalls).ToList();
+        nearBalls.ForEach(x => x.Color = Colors.Red);
+    }
+
+}

@@ -1,0 +1,46 @@
+@page "/game_of_live"
+@using Environment = ProblemBasedCase1.Data.Environment
+
+<h1>Game of Live</h1>
+
+<p>Current count: @_currentCount</p>
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@{
+    _env.InitializeMatrix();
+    _env.Live(3, 3);
+    _env.Live(3, 4);
+    _env.Live(3, 5);
+    _env.Live(2, 5);
+    _env.Live(1, 4);
+}
+<hr/>
+<table class="environment">
+    @for (var row = 0; row < _env.RowsNumber; row++)
+    {
+        <tr>
+            @for (var col = 0; col < _env.ColumnsNumber; col++)
+            {
+                if (_env.IsAlive(row, col))
+                {
+                    <td class="cell alive"></td>
+                }
+                else
+                {
+                    <td class="cell dead"></td>
+                }
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    private int _currentCount;
+    private readonly Environment _env = new Environment(15, 15);
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+        _env.NextConwayStep();
+    }
+
+}

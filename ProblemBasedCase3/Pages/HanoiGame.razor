@@ -1,0 +1,23 @@
+@page "/hanoi_game"
+@using ProblemBasedCase3.Interfaces
+<h1>Hanoi Game</h1>
+<label for="add_tower">Tower capacity</label>
+<input type="number" @bind="NewTowerCapacity" id="add_tower">
+<button class="btn btn-primary" @onclick="AddTower">Add new tower</button>
+<button class="btn btn-primary" @onclick="ToConsole">To Console</button>
+<div style="display: flex; margin-top: 30px">
+    @foreach (var tower in _hanoiGame.Towers)
+    {
+        <div>
+            <HanoiTower Tower="@tower"></HanoiTower>
+        </div>
+    }
+</div>
+
+@code {
+    private readonly IHanoiGame _hanoiGame = new Implementations.HanoiGame();
+    private int NewTowerCapacity { get; set; } = 5;
+    private void ToConsole() => _hanoiGame.ToConsole();
+    protected override void OnInitialized() => _hanoiGame.PushTower(new Implementations.HanoiTower(5));
+    private void AddTower() => _hanoiGame.PushTower(new Implementations.HanoiTower(NewTowerCapacity));
+}

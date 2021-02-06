@@ -1,0 +1,25 @@
+@page "/delete_tasks/{DeleteTaskId:long}"
+@using ProblemBasedCase5.Data
+
+<h1>Delete Task</h1>
+
+<div>
+    <p>Are you sure you want to delete task with id @DeleteTaskId ?</p>
+    <button type="submit" class="btn btn-primary" @onclick="DeleteTask">Delete Task</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public long DeleteTaskId { get; set; }
+
+    [Inject]
+    NavigationManager Manager { get; set; }
+
+    private void DeleteTask()
+    {
+        PostgresContext.DeleteTask(DeleteTaskId);
+        Manager.NavigateTo("read_all_tasks");
+    }
+
+}

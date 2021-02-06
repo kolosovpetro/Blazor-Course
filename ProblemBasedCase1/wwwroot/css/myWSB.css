@@ -1,0 +1,20 @@
+﻿.alive {
+    color: #26b050;
+    background-color: #26b050;
+    border-color: #0b2e13;
+}
+
+.dead {
+    color: #6c757d;
+    background-color: #6c757d;
+    border-color: #1b1e21;
+}
+
+.cell {
+    padding: 7px;
+}
+
+.environment {
+    table-layout: fixed;
+    border-spacing: 2px;
+}
