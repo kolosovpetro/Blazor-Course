@@ -1,0 +1,11 @@
+﻿@page "/single-store-status/{storeId:long}"
+
+<div class="container">
+    <h1>Status of the store</h1>
+    <Status StoreId="StoreId"></Status>
+</div>
+
+@code {
+    [Parameter]
+    public long StoreId { get; set; }
+}

@@ -1,0 +1,17 @@
+﻿@using ProblemBasedCase.Interfaces
+@using ProblemBasedCase.Data
+@page "/all-store-statuses"
+
+<div class="container">
+    <h1>Store Statuses</h1>
+    <div style="display: flex; justify-content: space-between">
+        @foreach (var store in _storeList.GetAllStores())
+        {
+            <Status StoreId="store.StoreId"></Status>
+        }
+    </div>
+</div>
+
+@code {
+    private readonly IStoreList _storeList = new StoreList();
+}

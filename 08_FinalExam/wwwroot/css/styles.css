@@ -1,0 +1,38 @@
+﻿.shirt-label {
+    background-image: url("icons/shirt_icon.png");
+    background-size: cover;
+    border: 2px solid black;
+    width: 50px;
+    height: 50px;
+    border-radius:7px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.shoe-label {
+    background-image: url("icons/shoe_icon.png");
+    background-size: cover;
+    border: 2px solid black;
+    width: 50px;
+    height: 50px;
+    border-radius:7px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.suit-label {
+    background-image: url("icons/suit_icon.png");
+    background-size: cover;
+    border: 2px solid black;
+    width: 50px;
+    height: 50px;
+    border-radius:7px;
+    margin-top: 10px;
+}
+
+.svg {
+    height: 150px;
+    width: 50px;
+    border: 2px solid black;
+    border-radius:7px;
+}

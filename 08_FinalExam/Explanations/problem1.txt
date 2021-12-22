@@ -1,0 +1,12 @@
+First screen contains a list of all stores already present in the list. 
+Interface contains a button "Show Add Store Section" which will show a form in order to add new store to the list. 
+Each field is verified. 
+Maximum capacities are stored in Constants.cs static class.
+Null or whitespace title of the store is verified.
+If user enters null or empty title, or store count value not in range (0, max) it will be an alert block shown.
+Each field has a label of name and Maximum capacity.
+Title field accepts strings.
+Other inputs accept only numbers.
+After add of new item to the list, "Add Store Section" will be collapsed again.
+
+To see this changes use the git command: git checkout problem_1

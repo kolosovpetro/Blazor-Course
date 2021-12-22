@@ -1,0 +1,96 @@
+﻿@page "/update_store/{storeId:long}"
+@using ProblemBasedCase.Data
+@using ProblemBasedCase.Interfaces
+
+<div class="container">
+    <h4>Update Store</h4>
+    <div class="form-group">
+        <label for="store_name">Store name</label>
+        <input @bind="_newStore.StoreName" type="text" class="form-control" id="store_name"
+                placeholder="Enter store name">
+    </div>
+    <div class="form-group">
+        <label for="shirt_boxes">Number of Shirt Boxes</label>
+        <input @bind="_newStore.ShirtBoxes" type="number" class="form-control" id="shirt_boxes"
+                placeholder="Enter number of shirt boxes">
+        <small class="form-text text-muted">Maximum: @Constants.MaxShirtBoxes</small>
+    </div>
+    <div class="form-group">
+        <label for="shoe_packs">Number of Shoe Packs</label>
+        <input @bind="_newStore.ShoePacks" type="number" class="form-control" id="shoe_packs"
+                placeholder="Enter number of shoe packs">
+        <small class="form-text text-muted">Maximum: @Constants.MaxShoePacks</small>
+    </div>
+    <div class="form-group">
+        <label for="suit_packs">Number of Suit Packs</label>
+        <input @bind="_newStore.SuitPacks" type="number" class="form-control" id="suit_packs"
+                placeholder="Enter number of suit packs">
+        <small class="form-text text-muted">Maximum: @Constants.MaxSuitPacks</small>
+    </div>
+    <button class="btn btn-primary" @onclick="Update">Update Store</button> 
+    <button class="btn btn-danger" @onclick="Cancel">Cancel</button>
+    <div class="alert alert-primary" style="margin-top: 20px; display: @DisplayAlert">
+        <p>@AlertMessage</p>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public long StoreId { get; set; }
+    
+    [Inject]
+    NavigationManager Manager { get; set; }
+    
+    private string DisplayAlert { get; set; } = "none";
+    private string AlertMessage { get; set; }
+
+    private readonly IStoreList _storeList = new StoreList();
+
+    private Data.Store _newStore;
+
+    protected override void OnInitialized()
+    {
+        _newStore = _storeList.GetStoreById(StoreId);
+    }
+    
+    private void Update()
+    {
+        if (string.IsNullOrEmpty(_newStore.StoreName) || string.IsNullOrWhiteSpace(_newStore.StoreName))
+        {
+            DisplayAlert = "block";
+            AlertMessage = "Title cannot be empty or whitespace.";
+            return;
+        }
+        
+        if (_newStore.ShirtBoxes <= 0 || _newStore.ShirtBoxes > Constants.MaxShirtBoxes)
+        {
+            DisplayAlert = "block";
+            AlertMessage = $"Number of shirt boxes should be between 0 and {Constants.MaxShirtBoxes}.";
+            return;
+        }
+        
+        if (_newStore.ShoePacks <= 0 || _newStore.ShoePacks > Constants.MaxShoePacks)
+        {
+            DisplayAlert = "block";
+            AlertMessage = $"Number of shoe packs should be between 0 and {Constants.MaxShoePacks}.";
+            return;
+        }
+        
+        if (_newStore.SuitPacks <= 0 || _newStore.SuitPacks > Constants.MaxSuitPacks)
+        {
+            DisplayAlert = "block";
+            AlertMessage = $"Number of suit packs should be between 0 and {Constants.MaxSuitPacks}.";
+            return;
+        }
+        
+        _storeList.UpdateStore(_newStore);
+        Manager.NavigateTo("store");
+    }
+
+    private void Cancel()
+    {
+        Manager.NavigateTo("store");
+    }
+}

@@ -1,0 +1,81 @@
+﻿@using ProblemBasedCase.Data
+@using ProblemBasedCase.Interfaces
+<div class="container">
+    <div style="width: 165px">
+        <div style="display: flex; align-content: space-between; width: 150px; height: 220px">
+            <div>
+                <div class="svg">
+                    <svg width="@BarWidth" height="@BarHeight">
+                        <rect x="0"
+                              y="@_statusModel.ShirtBarY"
+                              rx="5"
+                              ry="5"
+                              height="@_statusModel.ShirtBarHeight"
+                              width="@RectWidth"
+                              style="fill: @_statusModel.ShirtsColor">
+                        </rect>
+                    </svg>
+                </div>
+                <div class="shirt-label"></div>
+            </div>
+            <div>
+                <div class="svg">
+                    <svg width="@BarWidth" height="@BarHeight">
+                        <rect
+                            x="0"
+                            y="@_statusModel.ShoeBarY"
+                            rx="5"
+                            ry="5"
+                            height="@_statusModel.ShoeBarHeight"
+                            width="@RectWidth"
+                            style="fill: @_statusModel.ShoeColor">
+                        </rect>
+                    </svg>
+                </div>
+                <div class="shoe-label"></div>
+            </div>
+            <div>
+                <div class="svg">
+                    <svg width="@BarWidth" height="@BarHeight">
+                        <rect x="0"
+                              y="@_statusModel.SuitBarY"
+                              rx="5"
+                              ry="5"
+                              height="@_statusModel.SuitBarHeight"
+                              width="@RectWidth"
+                              style="fill: @_statusModel.SuitsColor">
+                        </rect>
+                    </svg>
+                </div>
+                <div class="suit-label"></div>
+            </div>
+        </div>
+        <p style="text-align: center">@_statusModel.StoreName</p>
+        <hr/>
+        <p style="text-align: center">Shirts: @_statusModel.ShirtsPercentage %</p>
+        <hr/>
+        <p style="text-align: center">Shoe: @_statusModel.ShoePercentage %</p>
+        <hr/>
+        <p style="text-align: center">Suits: @_statusModel.SuitsPercentage %</p>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public long StoreId { get; set; }
+
+        private const int BarHeight = 150;
+        private const int BarWidth = 50;
+        private const int RectWidth = 46;
+
+    private readonly IStoreList _storeList = new StoreList();
+
+    private StatusModel _statusModel;
+
+    protected override void OnInitialized()
+    {
+        _statusModel = new StatusModel(_storeList.GetStoreById(StoreId), BarHeight);
+    }
+
+}

@@ -1,0 +1,11 @@
+Table stores created using SQL script.
+Table stores has seed data same as example in PDF.
+Interface from previous problem is kept same.
+New component for store update is added.
+Store update component has long store ID as parameter.
+Store update component fetches the data by id, which is also stored in address bar.
+Delete store functionality is implemented.
+Before delete user confirmes deletion in confirmation box.
+SQL injections are prevented using Parameters in NpgSql API.
+
+To see this changes use the git command: git checkout problem_2

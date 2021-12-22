@@ -1,0 +1,1 @@
+Parent component is apdated via a callback. See https://chrissainty.com/3-ways-to-communicate-between-components-in-blazor/ part 1.

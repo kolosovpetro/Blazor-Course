@@ -1,0 +1,7 @@
+Store status is encapsulated to the Status.razor component.
+Status.razor component has a parameted of long ID.
+Status.razor component gets all the data from database by Store List class and Parameter of ID.
+Logics of Graph is encapsulated to the StatusModel.cs class.
+All calculations of graph heights, colors, positions are dont in StatusModel.cs class.
+
+To see this commit use: git checkout problem_3

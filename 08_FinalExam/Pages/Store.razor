@@ -1,0 +1,177 @@
+﻿@page "/store"
+@using ProblemBasedCase.Data
+@using ProblemBasedCase.Interfaces
+@inject IJSRuntime JsRuntime
+
+<div class="container">
+    <h1>Store</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Store</th>
+            <th scope="col">Shirt Boxes</th>
+            <th scope="col">Shoe Packs</th>
+            <th scope="col">Suit Packs</th>
+            <th scope="col">Details</th>
+            <th scope="col">Update</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in _stores)
+        {
+            <tr>
+                <td>@row.StoreId</td>
+                <td>@row.StoreName</td>
+                <td>@row.ShirtBoxes</td>
+                <td>@row.ShoePacks</td>
+                <td>@row.SuitPacks</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => GoToDetails(row.StoreId)">Details</button>
+                </td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => GoToUpdate(row.StoreId)">Update</button>
+                </td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => DeleteStore(row.StoreId)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <hr/>
+    <button class="@ButtonClass" @onclick="ShowAddSection">@ButtonText</button>
+    <div style="margin-top: 20px; margin-bottom: 50px; display: @Display">
+        <h4>Enter new store data</h4>
+        <div>
+            <div class="form-group">
+                <label for="store_name">Store name</label>
+                <input @bind="_newStore.StoreName" type="text" class="form-control" id="store_name"
+                        placeholder="Enter store name">
+            </div>
+            <div class="form-group">
+                <label for="shirt_boxes">Number of Shirt Boxes</label>
+                <input @bind="_newStore.ShirtBoxes" type="number" class="form-control" id="shirt_boxes"
+                        placeholder="Enter number of shirt boxes">
+                <small class="form-text text-muted">Maximum: @Constants.MaxShirtBoxes</small>
+            </div>
+            <div class="form-group">
+                <label for="shoe_packs">Number of Shoe Packs</label>
+                <input @bind="_newStore.ShoePacks" type="number" class="form-control" id="shoe_packs"
+                        placeholder="Enter number of shoe packs">
+                <small class="form-text text-muted">Maximum: @Constants.MaxShoePacks</small>
+            </div>
+            <div class="form-group">
+                <label for="suit_packs">Number of Suit Packs</label>
+                <input @bind="_newStore.SuitPacks" type="number" class="form-control" id="suit_packs"
+                        placeholder="Enter number of suit packs">
+                <small class="form-text text-muted">Maximum: @Constants.MaxSuitPacks</small>
+            </div>
+            <button class="btn btn-primary" @onclick="AddNewStore">Add Store</button>
+            <div class="alert alert-primary" style="margin-top: 20px; display: @DisplayAlert">
+                <p>@AlertMessage</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Inject]
+    NavigationManager Manager { get; set; }
+
+    private readonly IStoreList _storeList = new StoreList();
+
+    protected override void OnInitialized()
+    {
+        _stores = _storeList.GetAllStores().OrderBy(x => x.StoreId);
+    }
+
+    #region Style Settings
+
+    private string Display { get; set; } = "none";
+    private string ButtonText { get; set; } = "Show Add Store Section";
+    private string ButtonClass { get; set; } = "btn btn-primary";
+    private string DisplayAlert { get; set; } = "none";
+    private string AlertMessage { get; set; }
+
+    #endregion
+
+    private readonly Data.Store _newStore = new Data.Store
+    {
+        StoreName = "Stary browar",
+        ShirtBoxes = 120,
+        ShoePacks = 150,
+        SuitPacks = 90
+    };
+
+    private IEnumerable<Data.Store> _stores = new List<Data.Store>();
+
+    private void ShowAddSection()
+    {
+        Display = Display == "none" ? "block" : "none";
+        ButtonText = ButtonText == "Show Add Store Section" ? "Hide Add Store Section" : "Show Add Store Section";
+        ButtonClass = ButtonClass == "btn btn-primary" ? "btn btn-danger" : "btn btn-primary";
+    }
+
+    #region Add mew store method
+
+    private void AddNewStore()
+    {
+        if (string.IsNullOrEmpty(_newStore.StoreName) || string.IsNullOrWhiteSpace(_newStore.StoreName))
+        {
+            DisplayAlert = "block";
+            AlertMessage = "Title cannot be empty or whitespace.";
+            return;
+        }
+
+        if (_newStore.ShirtBoxes <= 0 || _newStore.ShirtBoxes > Constants.MaxShirtBoxes)
+        {
+            DisplayAlert = "block";
+            AlertMessage = $"Number of shirt boxes should be between 0 and {Constants.MaxShirtBoxes}.";
+            return;
+        }
+
+        if (_newStore.ShoePacks <= 0 || _newStore.ShoePacks > Constants.MaxShoePacks)
+        {
+            DisplayAlert = "block";
+            AlertMessage = $"Number of shoe packs should be between 0 and {Constants.MaxShoePacks}.";
+            return;
+        }
+
+        if (_newStore.SuitPacks <= 0 || _newStore.SuitPacks > Constants.MaxSuitPacks)
+        {
+            DisplayAlert = "block";
+            AlertMessage = $"Number of suit packs should be between 0 and {Constants.MaxSuitPacks}.";
+            return;
+        }
+
+        _storeList.InsertStore(_newStore);
+        _stores = _storeList.GetAllStores();
+        ShowAddSection();
+    }
+
+    #endregion
+
+    private async Task DeleteStore(long id)
+    {
+        var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete id {id}?");
+        if (confirmed)
+        {
+            _storeList.DeleteStore(id);
+            _stores = _storeList.GetAllStores();
+        }
+    }
+
+    private void GoToUpdate(long id)
+    {
+        Manager.NavigateTo($"/update_store/{id}");
+    }
+
+    private void GoToDetails(long id)
+    {
+        Manager.NavigateTo($"/single-store-status/{id}");
+    }
+
+}

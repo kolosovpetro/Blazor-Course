@@ -4,7 +4,7 @@ Few project from university course on Blazor.
 
 ## Requirements
 
-- SDK .NET 5.0 (see https://dotnet.microsoft.com/download/visual-studio-sdks)
+- SDK .NET Core 3.1 (see https://dotnet.microsoft.com/download/visual-studio-sdks)
 - C# 9.0
 
 ## Table of contents
